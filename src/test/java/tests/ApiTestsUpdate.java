@@ -1,5 +1,11 @@
+package tests;
+
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import tests.models.lombok.LoginBodyLombokModel;
+import tests.models.lombok.LoginResponseLombokModel;
+import tests.models.pojo.LoginBodyModel;
+import tests.models.pojo.LoginResponseModel;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
@@ -8,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 
 
-public class ApiTests extends TestBase {
+public class ApiTestsUpdate extends TestBase {
 
     @Test
     void unsuccessfulLoginTest() {
@@ -21,21 +27,56 @@ public class ApiTests extends TestBase {
                 .statusCode(415);
     }
 
+    /*    @Test
+        void successfulLoginPojoTest() {
+            LoginBodyModel authData = new LoginBodyModel();
+            authData.setEmail("eve.holt@reqres.in");
+            authData.setPassword("cityslicka");
+
+            Response response = given()
+                    .body(authData)
+                    .contentType(JSON)
+                    .log().uri()
+
+                    .when()
+                    .post("/login")
+
+
+                    .then()
+                    .log().status()
+                    .log().body()
+                    .extract().response();
+
+            LoginResponseModel loginResponse = response.as(LoginResponseModel.class);
+
+            assertThat(response.statusCode()).isEqualTo(200);
+            assertThat(loginResponse.getToken()).isNotNull();
+        }
+    */
     @Test
-    void successfulLoginTest() {
-        String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"cityslicka\"}";
+    void successfulLoginLombokTest() {
+        LoginBodyLombokModel authData = new LoginBodyLombokModel();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
 
         Response response = given()
                 .body(authData)
                 .contentType(JSON)
                 .log().uri()
-                .when()
-                .post("/login");
 
-        response.then().log().status().log().body();
+                .when()
+                .post("/login")
+
+
+                .then()
+                .log().status()
+                .log().body()
+                .extract().response();
+
+        LoginResponseLombokModel loginResponse = response.as(LoginResponseLombokModel.class);
 
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.jsonPath().getString("token")).isNotNull();
+        assertThat(loginResponse.getToken()).isNotNull();
     }
 
     @Test
