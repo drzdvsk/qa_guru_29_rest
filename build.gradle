@@ -10,7 +10,8 @@ dependencies {
     testImplementation(
             'io.rest-assured:rest-assured:5.5.0',
             "org.junit.jupiter:junit-jupiter:5.10.2",
-            'org.slf4j:slf4j-simple:2.0.7'
+            'org.slf4j:slf4j-simple:2.0.7',
+            'org.assertj:assertj-core:3.24.2'
     )
     implementation 'org.aspectj:aspectjweaver:1.9.22.1'
 }

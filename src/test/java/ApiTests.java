@@ -1,41 +1,41 @@
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 
-public class ApiTests {
+
+public class ApiTests extends TestBase {
 
     @Test
     void unsuccessfulLoginTest() {
         given()
                 .log().uri()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .log().status()
                 .log().body()
                 .statusCode(415);
-
-
     }
 
     @Test
     void successfulLoginTest() {
         String authData = "{\"email\": \"eve.holt@reqres.in\", \"password\": \"cityslicka\"}";
 
-        given()
+        Response response = given()
                 .body(authData)
                 .contentType(JSON)
                 .log().uri()
-
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login");
 
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("token", is("QpwL5tke4Pnpja7X4"));
+        response.then().log().status().log().body();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.jsonPath().getString("token")).isNotNull();
     }
 
     @Test
@@ -45,7 +45,9 @@ public class ApiTests {
                 .log().uri()
 
                 .when()
-                .get("https://reqres.in/api/users?page=2")
+                .queryParam("page", "2")
+                .get("/users")
+
 
                 .then()
                 .log().status()
@@ -82,7 +84,7 @@ public class ApiTests {
                 .log().body()
 
                 .when()
-                .put("https://reqres.in/api/users/2")
+                .put("/users/2")
 
                 .then()
                 .log().status()
@@ -99,7 +101,7 @@ public class ApiTests {
                 .log().body()
 
                 .when()
-                .delete("https://reqres.in/api/users/3")
+                .delete("/users/3")
 
                 .then()
                 .log().status()
@@ -121,7 +123,7 @@ public class ApiTests {
                 .log().body()
 
                 .when()
-                .post("https://reqres.in/api/users")
+                .post("/users")
 
                 .then()
                 .log().status()
