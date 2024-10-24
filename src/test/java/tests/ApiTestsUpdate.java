@@ -5,6 +5,7 @@ import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import models.lombok.CreateUserLombokModel;
 import models.lombok.UpdateUserLombokModel;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import models.lombok.LoginBodyLombokModel;
 import models.lombok.LoginResponseLombokModel;
@@ -21,6 +22,7 @@ import static specs.BaseSpec.baseResponseSpec;
 public class ApiTestsUpdate extends TestBase {
 
     @Test
+    @Tag("api")
     void unsuccessfulLoginTest() {
         Response response = step("Unsuccessful login without any data", () ->
                 given(baseRequestSpec)
@@ -36,6 +38,7 @@ public class ApiTestsUpdate extends TestBase {
     }
 
     @Test
+    @Tag("api")
     void successfulLoginWithSpecsTest() {
         LoginBodyLombokModel authData = new LoginBodyLombokModel();
         authData.setEmail("eve.holt@reqres.in");
@@ -61,6 +64,7 @@ public class ApiTestsUpdate extends TestBase {
     }
 
     @Test
+    @Tag("api")
     void checkListUsersOnPage2Test() {
 
         Response response = step("Check list user on second page", () ->
@@ -90,6 +94,7 @@ public class ApiTestsUpdate extends TestBase {
     }
 
     @Test
+    @Tag("api")
     void updateUser2Test() {
         UpdateUserLombokModel updateUser = new UpdateUserLombokModel();
         updateUser.setName("morpheus");
@@ -114,6 +119,7 @@ public class ApiTestsUpdate extends TestBase {
     }
 
     @Test
+    @Tag("api")
     void deleteUser3Test() {
 
         Response response = step("Delete User", () ->
@@ -131,6 +137,7 @@ public class ApiTestsUpdate extends TestBase {
     }
 
     @Test
+    @Tag("api")
     void createUserTest() {
 
         CreateUserLombokModel createUser = new CreateUserLombokModel();

@@ -1,0 +1,23 @@
+{
+  "base": {
+    "project": "Some project name",
+    "environment": "",
+    "comment": "comment here @namasse1",
+    "reportLink": "",
+    "language": "en",
+    "allureFolder": "C:\\Users\\Power\\AppData\\Local\\Temp\\17379408566053745816\\allure-report",
+    "enableChart": true
+  },
+  "telegram": {
+    "token": "7978721950:AAEPdjeJjt5V3VNfuR1v1vs5L0Kld8g5GqE",
+    "chat": "-4543537348",
+    "replyTo": "",
+    "templatePath": "/templates/telegram.ftl"
+  },
+  "slack": {
+    "token": "",
+    "chat": "",
+    "replyTo": "",
+    "templatePath": "/templates/markdown.ftl"
+  }
+}
