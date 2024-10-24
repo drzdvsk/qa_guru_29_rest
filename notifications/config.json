@@ -5,7 +5,7 @@
     "comment": "comment here @namasse1",
     "reportLink": "",
     "language": "en",
-    "allureFolder": "C:\\Users\\Power\\AppData\\Local\\Temp\\18422824014160137944\\allure-report",
+    "allureFolder": "/home/jenkins/workspace/C29_namasse1_16_rest/allure-report",
     "enableChart": true
   },
   "telegram": {
