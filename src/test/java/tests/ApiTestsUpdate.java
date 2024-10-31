@@ -1,16 +1,12 @@
 package tests;
 
-import helpers.ApiHelper;
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
-import models.lombok.CreateUserLombokModel;
-import models.lombok.UpdateUserLombokModel;
+import models.lombok.*;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import models.lombok.LoginBodyLombokModel;
-import models.lombok.LoginResponseLombokModel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
@@ -24,7 +20,7 @@ public class ApiTestsUpdate extends TestBase {
     @Test
     @Tag("api")
     void unsuccessfulLoginTest() {
-        Response response = step("Unsuccessful login without any data", () ->
+        Response responseModel = step("Unsuccessful login without any data", () ->
                 given(baseRequestSpec)
 
                         .when()
@@ -34,7 +30,7 @@ public class ApiTestsUpdate extends TestBase {
                         .spec(baseResponseSpec)
                         .extract().response());
         step("Check 400 status code", () ->
-                assertThat(response.statusCode()).isEqualTo(400));
+                assertThat(responseModel.statusCode()).isEqualTo(400));
     }
 
     @Test
@@ -55,11 +51,11 @@ public class ApiTestsUpdate extends TestBase {
                         .spec(baseResponseSpec)
                         .extract().response());
 
-        LoginResponseLombokModel loginResponse = response.as(LoginResponseLombokModel.class);
+        LoginResponseLombokModel responseModel = response.as(LoginResponseLombokModel.class);
 
         step("Check response", () -> {
             assertThat(response.statusCode()).isEqualTo(200);
-            assertThat(loginResponse.getToken()).isNotNull();
+            assertThat(responseModel.getToken()).isNotNull();
         });
     }
 
@@ -67,29 +63,38 @@ public class ApiTestsUpdate extends TestBase {
     @Tag("api")
     void checkListUsersOnPage2Test() {
 
-        Response response = step("Check list user on second page", () ->
+        UserListResponseModel responseModel = step("Check list user on second page", () ->
                 given(baseRequestSpec)
                         .queryParam("page", "2")
                         .when()
                         .get("/users")
                         .then()
                         .spec(baseResponseSpec)
-                        .extract().response());
+                        .extract().as(UserListResponseModel.class));
 
         step("Check response", () -> {
-            ApiHelper.checkPagination(response, 2, 6, 12, 2);
-            ApiHelper.checkUserIds(response, List.of(7, 8, 9, 10, 11, 12));
-            ApiHelper.checkUserEmails(response, List.of(
+            assertThat(responseModel.getPage()).isEqualTo(2);
+            assertThat(responseModel.getPer_page()).isEqualTo(6);
+            assertThat(responseModel.getTotal()).isEqualTo(12);
+            assertThat(responseModel.getSupport().getUrl())
+                    .isEqualTo("https://reqres.in/#support-heading");
+            assertThat(responseModel.getSupport().getText())
+                    .isEqualTo("To keep ReqRes free, contributions towards server costs are appreciated!");
+
+            List<String> expectedEmails = List.of(
                     "michael.lawson@reqres.in",
                     "lindsay.ferguson@reqres.in",
                     "tobias.funke@reqres.in",
                     "byron.fields@reqres.in",
                     "george.edwards@reqres.in",
                     "rachel.howell@reqres.in"
-            ));
-            ApiHelper.checkSupportInfo(response,
-                    "https://reqres.in/#support-heading",
-                    "To keep ReqRes free, contributions towards server costs are appreciated!");
+            );
+            List<String> actualEmail = responseModel.getData().stream()
+                    .map(UserListResponseModel.UserData::getEmail)
+                    .toList();
+
+            assertThat(actualEmail).containsAnyElementsOf(expectedEmails);
+
         });
     }
 
@@ -100,21 +105,19 @@ public class ApiTestsUpdate extends TestBase {
         updateUser.setName("morpheus");
         updateUser.setJob("zion resident");
 
-        Response response = step("Update user", () ->
+
+        UpdateUserResponseModel responseModel = step("Update user", () ->
                 given(baseRequestSpec)
                         .body(updateUser)
                         .when()
                         .put("/users/2")
                         .then()
                         .spec(baseResponseSpec)
-                        .extract().response());
+                        .extract().as(UpdateUserResponseModel.class));
 
         step("Check User name and job after update", () -> {
-            String name = response.path("name");
-            String job = response.path("job");
-
-            assertThat(name).isEqualTo("morpheus");
-            assertThat(job).isEqualTo("zion resident");
+            assertThat(responseModel.getName()).isEqualTo("morpheus");
+            assertThat(responseModel.getJob()).isEqualTo("zion resident");
         });
     }
 
@@ -144,7 +147,7 @@ public class ApiTestsUpdate extends TestBase {
         createUser.setName("morpheus");
         createUser.setJob("leader");
 
-        Response response = step("Create user", () ->
+        CreateUserResponseModel responseModel = step("Create user", () ->
 
                 given(baseRequestSpec)
                         .body(createUser)
@@ -154,14 +157,11 @@ public class ApiTestsUpdate extends TestBase {
 
                         .then()
                         .spec(baseResponseSpec)
-                        .extract().response());
+                        .extract().as(CreateUserResponseModel.class));
 
         step("Check User name and job after create", () -> {
-            String name = response.path("name");
-            String job = response.path("job");
-
-            assertThat(name).isEqualTo("morpheus");
-            assertThat(job).isEqualTo("leader");
+            assertThat(responseModel.getName()).isEqualTo("morpheus");
+            assertThat(responseModel.getJob()).isEqualTo("leader");
         });
 
     }
